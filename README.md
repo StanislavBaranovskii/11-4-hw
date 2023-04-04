@@ -24,6 +24,44 @@
 
 *Итогом выполнения домашнего задания будет приложенный скриншот веб-интерфейса RabbitMQ.*
 
+### Установка и запуск RabbitMQ
+
+```
+sudo apt install -y curl gnupg apt-transport-https -y
+curl -1sLf "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf77f1eda57ebb1cc" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/net.launchpad.ppa.rabbitmq.erlang.gpg > /dev/null
+curl -1sLf "https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/io.packagecloud.rabbitmq.gpg > /dev/null
+
+sudo nano /etc/apt/sources.list.d/rabbitmq.list 
+# Содежимое файла rabbitmq.list 
+> ## Provides modern Erlang/OTP releases
+> deb [signed-by=/usr/share/keyrings/net.launchpad.ppa.rabbitmq.erlang.gpg] http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu jammy main
+> deb-src [signed-by=/usr/share/keyrings/net.launchpad.ppa.rabbitmq.erlang.gpg] http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu jammy main
+> ## Provides RabbitMQ
+> deb [signed-by=/usr/share/keyrings/io.packagecloud.rabbitmq.gpg] https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ jammy main
+> deb-src [signed-by=/usr/share/keyrings/io.packagecloud.rabbitmq.gpg] https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ jammy main
+
+sudo apt update
+sudo apt install -y erlang-base \
+erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
+erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
+erlang-runtime-tools erlang-snmp erlang-ssl \
+erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
+sudo apt install -y rabbitmq-server --fix-missing
+
+sudo systemctl status rabbitmq-server
+sudo systemctl enable rabbitmq-server
+
+sudo rabbitmq-plugins enable rabbitmq_management
+
+http://localhost:15672  #guest:guest или, для дрступа по внешнему IP создаем пользователя admin :
+sudo rabbitmqctl add_user admin 12345
+sudo rabbitmqctl set_user_tags admin administrator
+sudo rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"
+
+```
+### Скриншот RabbitMQ
+![Скриншот RabbitMQ](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-1.png "Скриншот RabbitMQ")
+
 ---
 
 ## Задание 2. Отправка и получение сообщений
@@ -44,6 +82,17 @@ $ pip install pika
 *В качестве решения домашнего задания приложите оба скриншота, сделанных на этапе выполнения.*
 
 Для закрепления материала можете попробовать модифицировать скрипты, чтобы поменять название очереди и отправляемое сообщение.
+
+### Выполнение тестовой отправки и получения сообщения
+
+```
+
+```
+### Скриншот очереди hello
+![Скриншот очереди hello](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-2-1.png "Скриншот очереди hello")
+
+### Скриншот очереди
+![Скриншот очереди](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-2-2.png "Скриншот очереди")
 
 ---
 
