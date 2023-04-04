@@ -53,7 +53,7 @@ sudo systemctl enable rabbitmq-server
 
 sudo rabbitmq-plugins enable rabbitmq_management
 
-http://localhost:15672  #guest:guest или, для дрступа по внешнему IP создаем пользователя admin :
+http://localhost:15672  #guest:guest ИЛИ, для доступа по внешнему IP создаем пользователя admin :
 sudo rabbitmqctl add_user admin 12345
 sudo rabbitmqctl set_user_tags admin administrator
 sudo rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"
@@ -86,6 +86,25 @@ $ pip install pika
 ### Выполнение тестовой отправки и получения сообщения
 
 ```
+# В GUI создал очередь hello
+sudo rabbitmqctl list_queues
+sudo pip install pika # Для работы с очередями
+# команда rabbitmqadmin не найдена, но должна была установится с пакетом rabbitmq-server 
+# скопируем:
+#wget https://raw.githubusercontent.com/rabbitmq/rabbitmq-management/v3.7.8/bin/rabbitmqadmin
+wget https://raw.githubusercontent.com/rabbitmq/rabbitmq-management/v3.7.15/bin/rabbitmqadmin
+sudo chmod +x rabbitmqadmin
+sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' rabbitmqadmin
+sudo mv rabbitmqadmin /bin/
+rabbitmqadmin --version
+python3 -V
+
+rabbitmqadmin -f tsv -q list queues
+rabbitmqadmin get queue='hello'
+rabbitmqadmin delete queue name='hello'
+
+python3 consumer.py
+
 
 ```
 ### Скриншот очереди hello
