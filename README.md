@@ -90,20 +90,21 @@ $ pip install pika
 sudo rabbitmqctl list_queues
 sudo pip install pika # Для работы с очередями
 # команда rabbitmqadmin не найдена, но должна была установится с пакетом rabbitmq-server 
-# скопируем:
+# Устанавливаю самостоятельно:
 #wget https://raw.githubusercontent.com/rabbitmq/rabbitmq-management/v3.7.8/bin/rabbitmqadmin
 wget https://raw.githubusercontent.com/rabbitmq/rabbitmq-management/v3.7.15/bin/rabbitmqadmin
 sudo chmod +x rabbitmqadmin
-sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' rabbitmqadmin
-sudo mv rabbitmqadmin /bin/
-rabbitmqadmin --version
 python3 -V
+python -V
+sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' rabbitmqadmin  #правим в заголовоке скрипта на python3
+sudo cp rabbitmqadmin /bin/
+rabbitmqadmin --version
 
 rabbitmqadmin -f tsv -q list queues
 rabbitmqadmin get queue='hello'
 rabbitmqadmin delete queue name='hello'
 
-python3 consumer.py
+python3 producer.py
 
 
 ```
