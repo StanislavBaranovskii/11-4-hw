@@ -89,8 +89,8 @@ $ pip install pika
 # В GUI создал очередь hello
 sudo rabbitmqctl list_queues
 sudo pip install pika # Для работы с очередями
-# команда rabbitmqadmin не найдена, но должна была установится с пакетом rabbitmq-server 
-# Устанавливаю самостоятельно:
+# Для ubuntu: команда rabbitmqadmin не найдена, но должна была установится с пакетом rabbitmq-server 
+# Для ubuntu: Устанавливаю самостоятельно:
 #wget https://raw.githubusercontent.com/rabbitmq/rabbitmq-management/v3.7.8/bin/rabbitmqadmin
 wget https://raw.githubusercontent.com/rabbitmq/rabbitmq-management/v3.7.15/bin/rabbitmqadmin
 sudo chmod +x rabbitmqadmin
@@ -106,12 +106,17 @@ rabbitmqadmin delete queue name='hello'
 
 python3 producer.py
 
+# Редактирование скрипта consumer.py
+# Вместо  channel.basic_consume(callback, queue='hello', no_ack=True)
+# Заменил на  channel.basic_consume('hello', callback, auto_ack=True)
+
+python3 consumer.py
 
 ```
-### Скриншот очереди hello
-![Скриншот очереди hello](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-2-1.png "Скриншот очереди hello")
+### Скриншот очереди hello (producer.py)
+![Скриншот очереди hello](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-2-1.png "Скриншот очереди")
 
-### Скриншот очереди
+### Скриншот очереди hello (consumer.py)
 ![Скриншот очереди](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-2-2.png "Скриншот очереди")
 
 ---
