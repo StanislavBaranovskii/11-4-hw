@@ -137,22 +137,59 @@ $ cat /etc/hosts
 Затем объедините две машины в кластер и создайте политику ha-all на все очереди.
 
 *В качестве решения домашнего задания приложите скриншоты из веб-интерфейса с информацией о доступных нодах в кластере и включённой политикой.*
+### Скриншот доступных нод
+![Скриншот доступных нод](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-1.png "Скриншот доступных нод")
+### Скриншот включенной политики
+![Скриншот включенной политики](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-2.png "Скриншот включенной политики")
 
 Также приложите вывод команды с двух нод:
 
 ```shell script
 $ rabbitmqctl cluster_status
 ```
+### Скриншот вывод команды
+![Скриншот вывод команды](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-3.png "Скриншот вывод команды")
 
 Для закрепления материала снова запустите скрипт producer.py и приложите скриншот выполнения команды на каждой из нод:
 
 ```shell script
 $ rabbitmqadmin get queue='hello'
 ```
+### Скриншот очереди hello (producer.py - нода debian1)
+![Скриншот очереди hello](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-4.png "Скриншот очереди")
+### Скриншот очереди hello (producer.py - нода debian2)
+![Скриншот очереди hello](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-5.png "Скриншот очереди")
 
 После чего попробуйте отключить одну из нод, желательно ту, к которой подключались из скрипта, затем поправьте параметры подключения в скрипте consumer.py на вторую ноду и запустите его.
 
 *Приложите скриншот результата работы второго скрипта.*
+
+
+```
+sudo apt install ufw
+sudo ufw enable
+sudo ufw allow 15672/tcp
+sudo ufw allow 5672/tcp
+sudo ufw allow 4369/tcp
+sudo ufw allow 25672/tcp
+sudo ufw reload
+sudo ufw status
+
+#Скопировать файл /var/lib/rabbitmq/.erlang.cookie с ноды rabbit@debian1 на ноду rabbit@debian2
+sudo systemctl restart rabbitmq-server #На второй ноде rabbit@debian2
+sudo rabbitmqctl stop_app #На второй ноде rabbit@debian2
+sudo rabbitmqctl join_cluster rabbit@debian1 #На второй ноде rabbit@debian2
+sudo rabbitmqctl start_app #На второй ноде rabbit@debian2
+
+sudo rabbitmqctl cluster_status
+
+sudo rabbitmqctl delete_user guest
+sudo rabbitmqctl list_users
+
+#политика позволяет всем очередям быть зеркалированными на всех узлах кластера RabbitMQ:
+sudo rabbitmqctl set_policy ha-all ".*" '{"ha-mode": "all"}'
+sudo rabbitmqctl list_policies
+```
 
 ---
 
