@@ -155,10 +155,13 @@ $ rabbitmqctl cluster_status
 ```shell script
 $ rabbitmqadmin get queue='hello'
 ```
-### Скриншот очереди hello (producer.py - нода debian1)
-![Скриншот очереди hello](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-4.png "Скриншот очереди")
-### Скриншот очереди hello (producer.py - нода debian2)
-![Скриншот очереди hello](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-5.png "Скриншот очереди")
+```
+rabbitmqadmin get queue='hello' -H debian1 -P 15672 -u rabbit -p 12345
+rabbitmqadmin get queue='hello' -H debian2 -P 15672 -u rabbit -p 12345
+```
+### Скриншот выполнения команды на нодах: debian1 и debian2
+![Скриншот выполнения команды](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-4.png "Скриншот выполнения команды")
+
 
 После чего попробуйте отключить одну из нод, желательно ту, к которой подключались из скрипта, затем поправьте параметры подключения в скрипте consumer.py на вторую ноду и запустите его.
 
