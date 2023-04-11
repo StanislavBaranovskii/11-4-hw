@@ -189,6 +189,9 @@ sudo rabbitmqctl list_users
 #политика позволяет всем очередям быть зеркалированными на всех узлах кластера RabbitMQ:
 sudo rabbitmqctl set_policy ha-all ".*" '{"ha-mode": "all"}'
 sudo rabbitmqctl list_policies
+
+#редактируем скрипты для работы с очередями в кластере - добавил строку:
+# credentials = pika.PlainCredentials('rabbit','12345')
 ```
 
 ---
