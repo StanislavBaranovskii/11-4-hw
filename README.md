@@ -26,20 +26,24 @@
 
 ### Установка и запуск RabbitMQ
 
-```
+```bash
 sudo apt install -y curl gnupg apt-transport-https -y
 curl -1sLf "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf77f1eda57ebb1cc" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/net.launchpad.ppa.rabbitmq.erlang.gpg > /dev/null
 curl -1sLf "https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey" | sudo gpg --dearmor | sudo tee /usr/share/keyrings/io.packagecloud.rabbitmq.gpg > /dev/null
 
 sudo nano /etc/apt/sources.list.d/rabbitmq.list 
-# Содежимое файла rabbitmq.list 
-> ## Provides modern Erlang/OTP releases
-> deb [signed-by=/usr/share/keyrings/net.launchpad.ppa.rabbitmq.erlang.gpg] http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu jammy main
-> deb-src [signed-by=/usr/share/keyrings/net.launchpad.ppa.rabbitmq.erlang.gpg] http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu jammy main
-> ## Provides RabbitMQ
-> deb [signed-by=/usr/share/keyrings/io.packagecloud.rabbitmq.gpg] https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ jammy main
-> deb-src [signed-by=/usr/share/keyrings/io.packagecloud.rabbitmq.gpg] https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ jammy main
+```
+Содежимое файла rabbitmq.list
+```shell script
+## Provides modern Erlang/OTP releases
+deb [signed-by=/usr/share/keyrings/net.launchpad.ppa.rabbitmq.erlang.gpg] http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu jammy main
+deb-src [signed-by=/usr/share/keyrings/net.launchpad.ppa.rabbitmq.erlang.gpg] http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu jammy main
+## Provides RabbitMQ
+deb [signed-by=/usr/share/keyrings/io.packagecloud.rabbitmq.gpg] https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ jammy main
+deb-src [signed-by=/usr/share/keyrings/io.packagecloud.rabbitmq.gpg] https://packagecloud.io/rabbitmq/rabbitmq-server/ubuntu/ jammy main
+```
 
+```bash
 sudo apt update
 sudo apt install -y erlang-base \
 erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
@@ -85,7 +89,7 @@ $ pip install pika
 
 ### Выполнение тестовой отправки и получения сообщения
 
-```
+```bash
 # В GUI создал очередь hello
 sudo rabbitmqctl list_queues
 sudo pip install pika # Для работы с очередями
@@ -155,20 +159,22 @@ $ rabbitmqctl cluster_status
 ```shell script
 $ rabbitmqadmin get queue='hello'
 ```
-```
+```bash
 rabbitmqadmin get queue='hello' -H debian1 -P 15672 -u rabbit -p 12345
 rabbitmqadmin get queue='hello' -H debian2 -P 15672 -u rabbit -p 12345
 ```
-### Скриншот выполнения команды на нодах: debian1 и debian2
+### Скриншот выполнения команды на нодах debian1 и debian2
 ![Скриншот выполнения команды](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-4.png "Скриншот выполнения команды")
 
-
 После чего попробуйте отключить одну из нод, желательно ту, к которой подключались из скрипта, затем поправьте параметры подключения в скрипте consumer.py на вторую ноду и запустите его.
+
+### Скриншот выполнения команды на ноде debian1 после отключения ноды debian2
+![Скриншот выполнения команды](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/img/11-4-3-5.png "Скриншот выполнения команды")
 
 *Приложите скриншот результата работы второго скрипта.*
 
 
-```
+```bash
 sudo apt install ufw
 sudo ufw enable
 sudo ufw allow 15672/tcp
@@ -192,9 +198,16 @@ sudo rabbitmqctl list_users
 #политика позволяет всем очередям быть зеркалированными на всех узлах кластера RabbitMQ:
 sudo rabbitmqctl set_policy ha-all ".*" '{"ha-mode": "all"}'
 sudo rabbitmqctl list_policies
-
-#редактируем скрипты для работы с очередями в кластере - добавил строку:
-# credentials = pika.PlainCredentials('rabbit','12345')
+```
+Редактируем скрипты [producer-deb1.py](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/11-04/producer-deb1.py) и [consumer-deb1.py](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/11-04/consumer-deb1.py) для работы с очередями в кластере на нодах debian1 и debian2:
+```shell script
+credentials = pika.PlainCredentials('rabbit','12345')
+connection = pika.BlockingConnection(pika.ConnectionParameters('debian1',5672,'/',credentials))
+```
+Редактируем скрипты [producer-deb2.py](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/11-04/producer-deb2.py) и [consumer-deb2.py](https://github.com/StanislavBaranovskii/11-4-hw/blob/main/11-04/consumer-deb2.py) для работы с очередями в кластере на нодах debian1 и debian2:
+```shell script
+credentials = pika.PlainCredentials('rabbit','12345')
+connection = pika.BlockingConnection(pika.ConnectionParameters('debian2',5672,'/',credentials))
 ```
 
 ---
